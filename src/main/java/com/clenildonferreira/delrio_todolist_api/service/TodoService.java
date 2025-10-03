@@ -26,18 +26,44 @@ public class TodoService {
     }
 
     public List<TodoDTO> getAllTodos() {
-        Sort sort = Sort.by(Sort.Order.desc("priority"), Sort.Order.asc("title"));
+        Sort sort = Sort.by(
+                Sort.Order.asc("priority"),
+                Sort.Order.desc("status"),
+                Sort.Order.asc("title"));
         return toDtoList(todoRepository.findAll(sort));
     }
 
-    public TodoDTO update(TodoDTO todoDTO) {
-        validateTitle(todoDTO.getTitle());
-        Todo updated = todoRepository.save(todoDTO.toEntity());
+    public TodoDTO update(Long id, TodoDTO todoDTO) {
+        Todo existing = todoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tarefa não encontrada para o id informado."));
+
+        merge(existing, todoDTO);
+        validateTitle(existing.getTitle());
+
+        Todo updated = todoRepository.save(existing);
         return TodoDTO.fromEntity(updated);
     }
 
     public void delete(Long todoId) {
         todoRepository.deleteById(todoId);
+    }
+
+    private void merge(Todo target, TodoDTO source) {
+        if (source.getTitle() != null) {
+            target.setTitle(source.getTitle());
+        }
+        if (source.getDescription() != null) {
+            target.setDescription(source.getDescription());
+        }
+        if (source.getStatus() != null) {
+            target.setStatus(source.getStatus());
+        }
+        if (source.getPriority() != null) {
+            target.setPriority(source.getPriority());
+        }
+        if (source.getCreatedAt() != null) {
+            target.setCreatedAt(source.getCreatedAt());
+        }
     }
 
     private void validateTitle(String title) {

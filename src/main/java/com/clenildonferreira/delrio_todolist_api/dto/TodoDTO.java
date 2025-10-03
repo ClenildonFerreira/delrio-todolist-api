@@ -8,11 +8,14 @@ public class TodoDTO {
     private Long id;
     private String title;
     private String description;
-    private boolean status;
-    private int priority;
+    private Boolean status;
+    private Integer priority;
     private Date createdAt;
 
-    public TodoDTO(Long id, String title, String description, boolean status, int priority, Date createdAt) {
+    public TodoDTO() {
+    }
+
+    public TodoDTO(Long id, String title, String description, Boolean status, Integer priority, Date createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -40,8 +43,12 @@ public class TodoDTO {
         todo.setId(id);
         todo.setTitle(title);
         todo.setDescription(description);
-        todo.setStatus(status);
-        todo.setPriority(priority);
+        if (status != null) {
+            todo.setStatus(status);
+        }
+        if (priority != null) {
+            todo.setPriority(priority);
+        }
         todo.setCreatedAt(createdAt == null ? null : new Date(createdAt.getTime()));
         return todo;
     }
@@ -70,19 +77,19 @@ public class TodoDTO {
         this.description = description;
     }
 
-    public boolean isStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
