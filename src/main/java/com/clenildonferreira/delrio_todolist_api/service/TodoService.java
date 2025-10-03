@@ -18,8 +18,9 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public List<TodoDTO> create(List<TodoDTO> todoDTOs) {
-        return saveAll(todoDTOs);
+    public TodoDTO create(TodoDTO todoDTO) {
+        Todo saved = todoRepository.save(todoDTO.toEntity());
+        return TodoDTO.fromEntity(saved);
     }
 
     public List<TodoDTO> getAllTodos() {
@@ -27,24 +28,13 @@ public class TodoService {
         return toDtoList(todoRepository.findAll(sort));
     }
 
-    public List<TodoDTO> update(List<TodoDTO> todoDTOs) {
-        return saveAll(todoDTOs);
+    public TodoDTO update(TodoDTO todoDTO) {
+        Todo updated = todoRepository.save(todoDTO.toEntity());
+        return TodoDTO.fromEntity(updated);
     }
 
-    public List<TodoDTO> delete(List<Long> todoIds) {
-        List<Todo> todosToDelete = todoRepository.findAllById(todoIds);
-        List<TodoDTO> deletedDtos = toDtoList(todosToDelete);
-        todoRepository.deleteAllById(todoIds);
-        return deletedDtos;
-    }
-
-    private List<TodoDTO> saveAll(List<TodoDTO> todoDTOs) {
-        List<Todo> todos = todoDTOs.stream()
-                .map(TodoDTO::toEntity)
-                .collect(Collectors.toList());
-
-        List<Todo> persisted = todoRepository.saveAll(todos);
-        return toDtoList(persisted);
+    public void delete(Long todoId) {
+        todoRepository.deleteById(todoId);
     }
 
     private List<TodoDTO> toDtoList(List<Todo> todos) {

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,19 +32,19 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<List<TodoDTO>> createTodos(@RequestBody List<TodoDTO> todoDTOs) {
-        List<TodoDTO> created = todoService.create(todoDTOs);
+    public ResponseEntity<TodoDTO> createTodo(@RequestBody TodoDTO todoDTO) {
+        TodoDTO created = todoService.create(todoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PatchMapping
-    public ResponseEntity<List<TodoDTO>> updateTodos(@RequestBody List<TodoDTO> todoDTOs) {
-        return ResponseEntity.ok(todoService.update(todoDTOs));
+    public ResponseEntity<TodoDTO> updateTodo(@RequestBody TodoDTO todoDTO) {
+        return ResponseEntity.ok(todoService.update(todoDTO));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteTodos(@RequestBody List<Long> todoIds) {
-        todoService.delete(todoIds);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+        todoService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
