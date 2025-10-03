@@ -4,12 +4,26 @@ import java.util.Date;
 
 import com.clenildonferreira.delrio_todolist_api.entity.Todo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(name = "Todo", description = "Representa uma tarefa da lista")
 public class TodoDTO {
+    @Schema(description = "Identificador único da tarefa", example = "1")
     private Long id;
+
+    @Schema(description = "Título da tarefa", example = "Comprar mantimentos")
     private String title;
+
+    @Schema(description = "Descrição detalhada", example = "Ir ao mercado e comprar itens da lista")
     private String description;
+
+    @Schema(description = "Status de conclusão", example = "false")
     private Boolean status;
+
+    @Schema(description = "Prioridade da tarefa (0 é a mais alta)", example = "0")
     private Integer priority;
+
+    @Schema(description = "Data de criação", example = "2025-01-15T10:30:00Z")
     private Date createdAt;
 
     public TodoDTO() {

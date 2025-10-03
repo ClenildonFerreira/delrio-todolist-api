@@ -16,8 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.clenildonferreira.delrio_todolist_api.dto.TodoDTO;
 import com.clenildonferreira.delrio_todolist_api.service.TodoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/todos")
+@Tag(name = "Tarefas", description = "Operações para gerenciamento de tarefas")
 public class TodoController {
 
     private final TodoService todoService;
@@ -27,22 +34,38 @@ public class TodoController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar tarefas", description = "Obtém todas as tarefas cadastradas ordenadas por prioridade")
+    @ApiResponse(responseCode = "200", description = "Lista de tarefas retornada com sucesso",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = TodoDTO.class)))
     public ResponseEntity<List<TodoDTO>> getAllTodos() {
         return ResponseEntity.ok(todoService.getAllTodos());
     }
 
     @PostMapping
+    @Operation(summary = "Criar tarefa", description = "Cria uma nova tarefa a partir dos dados enviados")
+    @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = TodoDTO.class)))
     public ResponseEntity<TodoDTO> createTodo(@RequestBody TodoDTO todoDTO) {
         TodoDTO created = todoService.create(todoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PatchMapping("/{id}")
+    @Operation(summary = "Atualizar tarefa", description = "Atualiza parcialmente uma tarefa existente")
+    @ApiResponse(responseCode = "200", description = "Tarefa atualizada com sucesso",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = TodoDTO.class)))
+    @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
     public ResponseEntity<TodoDTO> updateTodo(@PathVariable Long id, @RequestBody TodoDTO todoDTO) {
         return ResponseEntity.ok(todoService.update(id, todoDTO));
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Excluir tarefa", description = "Remove uma tarefa existente")
+    @ApiResponse(responseCode = "204", description = "Tarefa excluída com sucesso")
+    @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         todoService.delete(id);
         return ResponseEntity.noContent().build();
