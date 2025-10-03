@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.clenildonferreira.delrio_todolist_api.dto.TodoDTO;
+import com.clenildonferreira.delrio_todolist_api.entity.Todo;
 import com.clenildonferreira.delrio_todolist_api.repository.TodoRepository;
 
 @Service
@@ -18,42 +19,37 @@ public class TodoService {
     }
 
     public List<TodoDTO> create(List<TodoDTO> todoDTOs) {
-        List<Todo> todos = todoDTOs.stream()
-                .map(TodoDTO::toEntity)
-                .collect(Collectors.toList());
-        
-        List<Todo> savedTodos = todoRepository.saveAll(todos);
-        
-        return savedTodos.stream()
-                .map(TodoDTO::fromEntity)
-                .collect(Collectors.toList());
+        return saveAll(todoDTOs);
     }
 
     public List<TodoDTO> getAllTodos() {
         Sort sort = Sort.by(Sort.Order.desc("priority"), Sort.Order.asc("title"));
-        
-        return todoRepository.findAll(sort)
-                .stream()
-                .map(TodoDTO::fromEntity)
-                .collect(Collectors.toList());
+        return toDtoList(todoRepository.findAll(sort));
     }
 
     public List<TodoDTO> update(List<TodoDTO> todoDTOs) {
-        List<Todo> todos = todoDTOs.stream()
-                .map(TodoDTO::toEntity)
-                .collect(Collectors.toList());
-        
-        List<Todo> updatedTodos = todoRepository.saveAll(todos);
-        
-        return updatedTodos.stream()
-                .map(TodoDTO::fromEntity)
-                .collect(Collectors.toList());
+        return saveAll(todoDTOs);
     }
 
     public List<TodoDTO> delete(List<Long> todoIds) {
+        List<Todo> todosToDelete = todoRepository.findAllById(todoIds);
+        List<TodoDTO> deletedDtos = toDtoList(todosToDelete);
         todoRepository.deleteAllById(todoIds);
-        return todoIds.stream()
-                .map(id -> new TodoDTO(id, "Deleted"))
+        return deletedDtos;
+    }
+
+    private List<TodoDTO> saveAll(List<TodoDTO> todoDTOs) {
+        List<Todo> todos = todoDTOs.stream()
+                .map(TodoDTO::toEntity)
+                .collect(Collectors.toList());
+
+        List<Todo> persisted = todoRepository.saveAll(todos);
+        return toDtoList(persisted);
+    }
+
+    private List<TodoDTO> toDtoList(List<Todo> todos) {
+        return todos.stream()
+                .map(TodoDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 }
