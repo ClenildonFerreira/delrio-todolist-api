@@ -1,5 +1,7 @@
 package com.clenildonferreira.delrio_todolist_api.entity;
 
+import com.clenildonferreira.delrio_todolist_api.enums.StatusTarefa;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +22,8 @@ public class Todo {
     private String title;
 
     private String description;
-    private boolean status;
+    @Column(name = "status")
+    private StatusTarefa status;
     private int priority;
     private Date createdAt;
 
@@ -48,11 +51,11 @@ public class Todo {
         this.description = description;
     }
 
-    public boolean isStatus() {
+    public StatusTarefa getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(StatusTarefa status) {
         this.status = status;
     }
 

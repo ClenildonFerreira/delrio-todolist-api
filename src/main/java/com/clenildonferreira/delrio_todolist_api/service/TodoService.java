@@ -21,6 +21,11 @@ public class TodoService {
 
     public TodoDTO create(TodoDTO todoDTO) {
         validateTitle(todoDTO.getTitle());
+        
+        if (todoDTO.getStatus() == null) {
+            todoDTO.setStatus(StatusTarefa.ABERTA);
+        }
+        
         Todo saved = todoRepository.save(todoDTO.toEntity());
         return TodoDTO.fromEntity(saved);
     }

@@ -3,6 +3,7 @@ package com.clenildonferreira.delrio_todolist_api.dto;
 import java.util.Date;
 
 import com.clenildonferreira.delrio_todolist_api.entity.Todo;
+import com.clenildonferreira.delrio_todolist_api.enums.StatusTarefa;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -18,7 +19,7 @@ public class TodoDTO {
     private String description;
 
     @Schema(description = "Status de conclusão", example = "false")
-    private Boolean status;
+    private StatusTarefa status;
 
     @Schema(description = "Prioridade da tarefa (0 é a mais alta)", example = "0")
     private Integer priority;
@@ -91,11 +92,11 @@ public class TodoDTO {
         this.description = description;
     }
 
-    public Boolean getStatus() {
+    public StatusTarefa getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(StatusTarefa status) {
         this.status = status;
     }
 
