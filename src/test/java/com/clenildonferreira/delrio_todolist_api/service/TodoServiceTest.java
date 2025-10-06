@@ -15,9 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -116,8 +119,13 @@ class TodoServiceTest {
     @Test
     void getAllTodos_shouldReturnPagedTodos() {
         // Given
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Todo> todoPage = new PageImpl<>(Arrays.asList(sampleTodo), pageable, 1);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(
+                Sort.Order.asc("priority"),
+                Sort.Order.desc("status"),
+                Sort.Order.asc("title")));
+        
+        List<Todo> todoList = Arrays.asList(sampleTodo);
+        Page<Todo> todoPage = new PageImpl<>(todoList, pageable, todoList.size());
         
         when(todoRepository.findAll(pageable)).thenReturn(todoPage);
 
