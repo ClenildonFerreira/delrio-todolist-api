@@ -3,12 +3,17 @@ package com.clenildonferreira.delrio_todolist_api.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.clenildonferreira.delrio_todolist_api.dto.PagedResponseDTO;
 import com.clenildonferreira.delrio_todolist_api.dto.TodoDTO;
 import com.clenildonferreira.delrio_todolist_api.entity.Todo;
+import com.clenildonferreira.delrio_todolist_api.enums.StatusTarefa;
 import com.clenildonferreira.delrio_todolist_api.repository.TodoRepository;
 
 @Service
@@ -21,21 +26,34 @@ public class TodoService {
 
     public TodoDTO create(TodoDTO todoDTO) {
         validateTitle(todoDTO.getTitle());
-        
+
         if (todoDTO.getStatus() == null) {
             todoDTO.setStatus(StatusTarefa.ABERTA);
         }
-        
+
         Todo saved = todoRepository.save(todoDTO.toEntity());
         return TodoDTO.fromEntity(saved);
     }
 
-    public List<TodoDTO> getAllTodos() {
+    public PagedResponseDTO<TodoDTO> getAllTodos(int page, int size) {
         Sort sort = Sort.by(
                 Sort.Order.asc("priority"),
                 Sort.Order.desc("status"),
                 Sort.Order.asc("title"));
-        return toDtoList(todoRepository.findAll(sort));
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Todo> todoPage = todoRepository.findAll(pageable);
+
+        List<TodoDTO> todoDTOs = toDtoList(todoPage.getContent());
+
+        return new PagedResponseDTO<>(
+                todoDTOs,
+                todoPage.getNumber(),
+                todoPage.getSize(),
+                todoPage.getTotalElements(),
+                todoPage.getTotalPages(),
+                todoPage.isFirst(),
+                todoPage.isLast()
+        );
     }
 
     public TodoDTO update(Long id, TodoDTO todoDTO) {

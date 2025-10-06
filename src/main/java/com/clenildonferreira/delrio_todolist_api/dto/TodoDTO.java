@@ -30,7 +30,7 @@ public class TodoDTO {
     public TodoDTO() {
     }
 
-    public TodoDTO(Long id, String title, String description, Boolean status, Integer priority, Date createdAt) {
+    public TodoDTO(Long id, String title, String description, StatusTarefa status, Integer priority, Date createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -48,7 +48,7 @@ public class TodoDTO {
                 todo.getId(),
                 todo.getTitle(),
                 todo.getDescription(),
-                todo.isStatus(),
+                todo.getStatus(),
                 todo.getPriority(),
                 createdAtCopy);
     }
