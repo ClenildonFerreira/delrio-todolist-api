@@ -28,7 +28,6 @@ public class TodoIntegrationTest {
 
     @Test
     void todoCrudOperations_shouldWorkCorrectly() throws Exception {
-        // Create a new todo
         TodoDTO newTodo = new TodoDTO();
         newTodo.setTitle("Integration Test Task");
         newTodo.setDescription("Test description for integration test");
@@ -37,7 +36,7 @@ public class TodoIntegrationTest {
 
         String todoJson = objectMapper.writeValueAsString(newTodo);
 
-        // POST - Create todo
+        // POST 
         String createdTodoJson = mockMvc.perform(post("/todos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(todoJson))
@@ -49,11 +48,10 @@ public class TodoIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        // Parse the created todo to get its ID
         TodoDTO createdTodo = objectMapper.readValue(createdTodoJson, TodoDTO.class);
         Long todoId = createdTodo.getId();
 
-        // GET - Retrieve the created todo (through pagination)
+        // GET 
         mockMvc.perform(get("/todos")
                 .param("page", "0")
                 .param("size", "10")
@@ -61,7 +59,7 @@ public class TodoIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
 
-        // PATCH - Update the todo
+        // PATCH 
         TodoDTO updatedTodo = new TodoDTO();
         updatedTodo.setTitle("Updated Integration Test Task");
         updatedTodo.setDescription("Updated description");
@@ -78,14 +76,17 @@ public class TodoIntegrationTest {
                 .andExpect(jsonPath("$.title").value("Updated Integration Test Task"))
                 .andExpect(jsonPath("$.status").value("EM_ANDAMENTO"));
 
+        // DELETE 
         mockMvc.perform(delete("/todos/{id}", todoId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        
-        mockMvc.perform(patch("/todos/{id}", todoId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedTodoJson))
-                .andExpect(status().is5xxServerError()); 
+        mockMvc.perform(get("/todos")
+                .param("page", "0")
+                .param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.totalElements").value(0));
     }
 }
